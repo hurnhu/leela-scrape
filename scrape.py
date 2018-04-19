@@ -7,13 +7,17 @@ import re
 import time
 import os
 from selenium import webdriver
-
+import argparse
 from selenium.webdriver import FirefoxOptions
 #f = open('all.csv', 'r+')
 # specify the url
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--start', dest='start')
+parser.add_argument('--end', dest='end')
+args = parser.parse_args()
 fileName = 0
 pgnName = 0
-for x in range(149, 103037):
+for x in range(int(args.start), int(args.end)):
     #try:
         size = os.path.getsize('moves'+str(fileName)+'.csv')
         if (size > 9000000):
@@ -31,11 +35,12 @@ for x in range(149, 103037):
         opts = FirefoxOptions()
         opts.add_argument("--headless")
         driver = webdriver.Firefox(firefox_options=opts)
+        driver.set_page_load_timeout(30)
                 #driver = webdriver.PhantomJS()
         driver.get(quote_page)
         response = driver.page_source
         soup = BeautifulSoup(response, 'html.parser').find('div', {'id':re.compile('yui-gen*')})
-        #driver.close()
+        driver.quit()
         if(soup):
             # query the website and return the html to the variable ‘page’
            # response = urlopen(quote_page)
@@ -83,6 +88,9 @@ for x in range(149, 103037):
             #print(name_box)
         #except:
         else:
+            errorfile = open('error.txt', 'a')
+            errorfile.write(quote_page+'\n')
+            errorfile.close()
             f.write('error'+','+quote_page+'\n')
             f.close()
             pgns.close()
