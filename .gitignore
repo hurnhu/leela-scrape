@@ -1,0 +1,7 @@
+*.csv
+lib/
+lib64/
+include/
+share/
+gecko*
+bin/
